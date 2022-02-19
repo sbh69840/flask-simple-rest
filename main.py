@@ -21,8 +21,9 @@ def generate_text():
     context = request.json['context']
     temperature = request.json['temperature']
     max_length = request.json['max_length']
+    print(context)
     res = predict(context,temperature,max_length)
     return jsonify({'output': res})
 
 if __name__ == '__main__':
-    app.run(debug=False, port=5000)  # run app on port 8080 in debug mode
+    app.run(host="0.0.0.0",debug=False, port=8080)  # run app on port 8080 in debug mode
