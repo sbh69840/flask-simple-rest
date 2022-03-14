@@ -2,11 +2,11 @@ from flask import Flask, jsonify, request  # import objects from the Flask model
 from transformers import AutoModelForCausalLM, AutoTokenizer
 app = Flask(__name__)  # define app using Flask
 
-model = AutoModelForCausalLM.from_pretrained("EleutherAI/gpt-j-6B")
+model = AutoModelForCausalLM.from_pretrained("EleutherAI/gpt-j-6B").to("cuda")
 tokenizer = AutoTokenizer.from_pretrained("EleutherAI/gpt-j-6B")
 
 def predict(context,temperature,max_length):
-    input_ids = tokenizer(context, return_tensors="pt").input_ids
+    input_ids = tokenizer(context, return_tensors="pt").to("cuda").input_ids
     gen_tokens = model.generate(
         input_ids,
         do_sample=True,
