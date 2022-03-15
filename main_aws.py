@@ -5,7 +5,7 @@ import sagemaker
 
 app = Flask(__name__)  # define app using Flask
 # IAM role with permissions to create endpoint
-role = "turing1729"
+role = "ltts-gptj"
 
 # public S3 URI to gpt-j artifact
 model_uri="s3://gptj-sagemaker-inference/gpt-j/model.tar.gz"
