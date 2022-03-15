@@ -26,12 +26,12 @@ predictor = huggingface_model.deploy(
 )
 tokenizer = AutoTokenizer.from_pretrained("EleutherAI/gpt-j-6B")
 def predict(context,temperature,max_length,end_sequence,return_full_text):
-    return predictor.predict('inputs': context,
+    return predictor.predict({'inputs': context,
       "parameters" : {
-      "max_length": int(len(context) + max_length),
-      "temperature": float(temperature),
-      "eos_token_id": int(tokenizer.convert_tokens_to_ids(end_sequence)),
-      "return_full_text":return_full_text
+        "max_length": int(len(context) + max_length),
+        "temperature": float(temperature),
+        "eos_token_id": int(tokenizer.convert_tokens_to_ids(end_sequence)),
+        "return_full_text":return_full_text
       }
     })
 @app.route('/complete', methods=['POST'])
