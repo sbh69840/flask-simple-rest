@@ -50,7 +50,7 @@ def generate_text():
     print(context)
     response_queue = Queue()
     requests_queue.put(((context,temperature,max_length,end_sequence,return_full_text), response_queue,id))
-    return _corsify_actual_response(jsonify({"output": predict(*response_queue.get())}))
+    return _corsify_actual_response(jsonify({"output": response_queue.get()}))
 
 if __name__ == '__main__':
     threading.Thread(target=app.run, kwargs={"port": 8080, "host": "0.0.0.0"}).start()
