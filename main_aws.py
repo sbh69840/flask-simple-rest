@@ -4,6 +4,11 @@ from sagemaker.huggingface import HuggingFaceModel
 import sagemaker
 
 app = Flask(__name__)  # define app using Flask
+requests_queue = Queue()
+
+def _corsify_actual_response(response):
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    return response
 # IAM role with permissions to create endpoint
 role = "ltts-gptj"
 
@@ -41,9 +46,19 @@ def generate_text():
     max_length = request.json['max_length']
     end_sequence = request.json['end_sequence']
     return_full_text = request.json['return_full_text']
+    id = request.json['id']
     print(context)
-    res = predict(context,temperature,max_length,end_sequence,return_full_text)
-    return jsonify({'output': res})
+    response_queue = Queue()
+    requests_queue.put(((context,temperature,max_length,end_sequence,return_full_text), response_queue,id))
+    return _corsify_actual_response(jsonify({"output": predict(*response_queue.get())}))
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0",debug=False, port=8080)
+    threading.Thread(target=app.run, kwargs={"port": 8080, "host": "0.0.0.0"}).start()
+    while True:
+        try:
+            o, q, id = requests_queue.get(block=False)
+            pred = predict(*o)
+            pred[0]['id'] = id
+            q.put(pred)
+        except:
+            pass
