@@ -3,6 +3,7 @@ from flask import Flask, jsonify, request  # import objects from the Flask model
 from sagemaker.huggingface import HuggingFaceModel
 import sagemaker
 from queue import Queue
+import threading
 
 app = Flask(__name__)  # define app using Flask
 requests_queue = Queue()
